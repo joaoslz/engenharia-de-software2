@@ -8,14 +8,17 @@ import org.xml.sax.ext.LexicalHandler;
 import leilao.dominio.Leilao;
 import leilao.infra.dao.LeilaoDaoFalso;
 import leilao.infra.dao.RepositorioLeilao;
+import leilao.infra.email.EnviadorDeEmail;
 
 public class EncerradorDeLeilao {
 
 	private int total = 0;
 	private RepositorioLeilao dao;
-	
-	public EncerradorDeLeilao(RepositorioLeilao dao) {
+	private EnviadorDeEmail carteiro;
+
+	public EncerradorDeLeilao(RepositorioLeilao dao, EnviadorDeEmail carteiro) {
 		this.dao = dao;
+		this.carteiro = carteiro;
 	}
 
 	public void encerra() {
@@ -23,12 +26,19 @@ public class EncerradorDeLeilao {
 		List<Leilao> todosLeiloesCorrentes = dao.correntes();
 
 		for (Leilao leilao : todosLeiloesCorrentes) {
-			if (comecouSemanaPassada(leilao)) {
-				leilao.encerra();
-				total++;
-				dao.atualiza(leilao);
+			try {
+				if (comecouSemanaPassada(leilao)) {
+					leilao.encerra();
+					this.total++;
+					dao.atualiza(leilao);
+					carteiro.envia(leilao);
+				}
+			} catch (Exception e) {
+				// salvo a excecao no sistema de logs
+				// e o loop continua!
 			}
 		}
+
 	}
 
 	private boolean comecouSemanaPassada(Leilao leilao) {
