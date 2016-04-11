@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import modelo.Usuario;
 
-public class UsuarioDaoTests2 {
+public class UsuarioDaoTest {
 	
 	
 	private Session session;

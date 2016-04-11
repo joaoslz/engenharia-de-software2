@@ -14,7 +14,7 @@ import org.junit.Test;
 import modelo.Leilao;
 import modelo.Usuario;
 
-public class LeilaoDaoTests {
+public class LeilaoDaoTest {
 
 	private Session session;
 	private LeilaoDao leilaoDao;
